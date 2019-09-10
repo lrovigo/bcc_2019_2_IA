@@ -5,4 +5,4 @@ Os itens do trabalho foram implementados utilizando:
 - Sistema operacional `Windows 10`
 
 Foi implementado um ´Agente Reativo Simples´ de um aspirador o qual irá andar por um caminho de uma matriz 4x4 procurando por 
-sugeiras, ao encontra-las irá executar a ação aspirar para remover a sujeira da matriz.
+sujeiras, ao encontra-las irá executar a ação aspirar para remover a sujeira da matriz.
