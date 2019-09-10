@@ -97,11 +97,11 @@ def moverCima():
 def agenteReativoSimples(percepcao):
     global direcao
     if percepcao == 0:
-        print('Estado da percepcao: 0 Acao escolhida:' + direcao)
+        print('Acao escolhida: ' + direcao)
         return direcao
             
     if percepcao == 2:
-        print('Estado da percepcao: 2 Acao escolhida: ASPIRAR')
+        print('Acao escolhida: ASPIRAR')
         return 'ASPIRAR'
 
 if __name__ == "__main__":
