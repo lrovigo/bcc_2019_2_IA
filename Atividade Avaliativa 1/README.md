@@ -1,1 +1,8 @@
-# bcc_2019_2_IA
+## Sobre a implementação:
+Os itens do trabalho foram implementados utilizando:
+- `Python 3.7.4`
+- A execução foi realizada através da biblioteca ´Matplotlib´
+- Sistema operacional `Windows 10`
+
+Foi implementado um ´Agente Reativo Simples´ de um aspirador o qual irá andar por um caminho de uma matriz 4x4 procurando por 
+sugeiras, ao encontra-las irá executar a ação aspirar para remover a sujeira da matriz.
