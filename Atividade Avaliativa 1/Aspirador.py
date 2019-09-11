@@ -1,111 +1,132 @@
 import matplotlib.pyplot as plt
 from random import randint
-currLine = 1
-currCol = 4
-direcao = ''
-def main():
-    global currLine
-    global currCol
-    
-    numeroSugeiras = randint(1,16)
-    numeroSugeirasRestantes = numeroSugeiras
-    matriz = [[1,1,1,1,1,1],[1,0,0,0,0,1],[1,0,0,0,0,1],[1,0,0,0,0,1],[1,0,0,0,0,1],[1,1,1,1,1,1]] #Trocar Para Json
-    preencherMatriz(matriz,numeroSugeiras)
-    exibir(matriz)
-    global direcao
-    direcao = 'DIREITA'
-    direcaoY = 'BAIXO'
-    while numeroSugeirasRestantes > 0:
-        if(matriz[currLine][currCol] == 2):
-            agenteReativoSimples(matriz[currLine][currCol])
-            matriz[currLine][currCol] = 0
-           
-        if (currCol < len(matriz)-2 and direcao == 'DIREITA') or (currCol > 1 and direcao == 'ESQUERDA'):
-            agenteReativoSimples(matriz[currLine][currCol])
-            moverDirecao(direcao)    
-        else:
-            if(currLine < len(matriz)-2 and direcaoY == 'BAIXO') or (currLine > 1 and direcaoY == 'CIMA'):
-                aux = direcao
-                direcao = direcaoY
-                agenteReativoSimples(matriz[currLine][currCol])
-                direcao = aux
-                moverDirecao(direcaoY)
-                if(direcaoY == 'BAIXO' and currLine == len(matriz)-2):
-                    direcaoY = 'CIMA'
-                else:
-                    if direcaoY == 'CIMA' and currLine == 1:
-                        direcaoY = 'BAIXO'
-                if(direcao == 'DIREITA'):
-                    direcao = 'ESQUERDA'
-                else:
-                    direcao = 'DIREITA'
-            else:
-                if(currLine == len(matriz)-2 and direcaoY == 'BAIXO'):
-                    direcaoY = 'CIMA'
-        exibir(matriz)
+import json
+import logging
 
-def exibir(matriz):
-    global currLine
-    global currCol
-    plt.imshow(matriz, 'gray')
+CLEAN = 'ASPIRAR'
+RIGHT = 'DIREITA'
+LEFT = 'ESQUERDA'
+DOWN = 'BAIXO'
+UP = 'CIMA'
+
+position = [1,1]
+state = [
+        RIGHT,  # dirrection it's corrently moveing
+        DOWN,   # vertical next direction
+        RIGHT,  # horizontal next direction
+        ]
+
+def load_matrix(file_path):
+    with open(file_path) as file_buf:
+        matrix = json.load(file_buf)['base_map']
+
+    dirt_number = randint(1, 16)
+    dirt_set = set()
+    while len(dirt_set) < dirt_number:
+        dirt_set.add((randint(0, 3)+1, randint(0, 3)+1))
+
+    for x, y in dirt_set:
+        matrix[x][y] = 2
+
+    return matrix
+    
+def main():
+    matrix = load_matrix('map.json')
+
+    global position
+    
+    while True:
+        show(matrix)
+
+        posX, posY = position
+
+        currState = matrix[posX][posY]
+        logging.debug('matrix: %s' % (str(matrix)))
+        logging.debug('posX: %s' % (str(posX)))
+        logging.debug('posY: %s' % (str(posY)))
+        logging.debug('currState: %s' % (str(currState)))
+        action = agenteReativoSimples(currState)
+
+        print('Acao escolhida: %s' % (action))
+        logging.info('Acao escolhida: %s' % (action))
+
+        if action == CLEAN:
+            matrix[posX][posY] = 0
+        else:
+            move(action)
+
+def show(matrix):
+    global position
+    plt.imshow(matrix, 'gray')
     plt.show(block=False)
-    plt.plot(currCol, currLine, '*r', 'LineWidth', 5)
+    plt.plot(position[1], position[0], '*r', 'LineWidth', 5)
     plt.pause(0.5)
     plt.clf()
 
-def preencherMatriz(matriz,numeroSugeiras):
-    while numeroSugeiras > 0:
-        coluna = randint(0,5)
-        linha = randint(0,5)
-        if(matriz[linha][coluna] == 0):
-            matriz[linha][coluna] = 2
-            numeroSugeiras = numeroSugeiras - 1
+def move(direction):
+    global position
 
-def moverDirecao(direcao):
-    if direcao == 'DIREITA':
-        moverDireita()
-        return
-        
-    if direcao == 'ESQUERDA':
-        moverEsquerda()
-        return
-        
-    if direcao == 'CIMA':
-        moverCima()
-        return
-        
-    if direcao == 'BAIXO':
-        moverBaixo()
-        return
-        
-def moverDireita():
-    global currCol
-    currCol = currCol +1
-        
-def moverEsquerda():
-    global currCol
-    currCol = currCol - 1
-        
-def moverBaixo():
-    global currLine
-    currLine = currLine + 1    
-        
-def moverCima():
-    global currLine
-    currLine = currLine - 1       
+    logging.debug('moveging %s' % (str(direction)))
+    logging.debug('position: %s' % (str(position)))
+
+    if direction == RIGHT:
+        position[1] += 1
+    elif direction == LEFT:
+        position[1] -= 1
+    elif direction == UP:
+        position[0] -= 1
+    elif direction == DOWN:
+        position[0] += 1
+    logging.debug('position: %s' % (str(position)))
 
 def agenteReativoSimples(percepcao):
-    global direcao
-    if percepcao == 0:
-        print('Acao escolhida: ' + direcao)
-        return direcao
-            
+    logging.debug('percepcao: %s' % (str(percepcao)))
     if percepcao == 2:
-        print('Acao escolhida: ASPIRAR')
-        return 'ASPIRAR'
+        return CLEAN
 
+    # Load the agent state and position
+    global state
+    global position
+
+    direction, directionV, directionH = state
+    posX, posY = position
+
+    logging.debug('direction: %s' % (str(direction)))
+    logging.debug('directionV: %s' % (str(directionV)))
+    logging.debug('directionH: %s' % (str(directionH)))
+    logging.debug('posX: %s' % (str(posX)))
+    logging.debug('posY: %s' % (str(posY)))
+
+    moveingLeftWall = (direction == LEFT and posY == 1)
+    movingRightWall = (direction == RIGHT and posY == 4)
+    moveingVertival = (direction in (UP, DOWN))
+    isTop = (posX == 1)
+    isBotton = (posX == 4)
+
+    logging.debug('moveingLeftWall: %s' % (str(moveingLeftWall)))
+    logging.debug('movingRightWall: %s' % (str(movingRightWall)))
+    logging.debug('moveingVertival: %s' % (str(moveingVertival)))
+    logging.debug('isTop: %s' % (str(isTop)))
+    logging.debug('isBotton: %s' % (str(isBotton)))
+
+    if moveingLeftWall: 
+        direction = directionV
+        directionH = RIGHT
+    elif movingRightWall: # TODO: change to not be static
+        direction = directionV
+        directionH = LEFT
+    elif moveingVertival:
+        if isTop:
+            directionV = DOWN
+        elif isBotton:
+            directionV = UP
+
+        direction = directionH
+
+    # Overite the state of the agent
+    state = [direction, directionV, directionH]
+    return direction
+            
 if __name__ == "__main__":
+    logging.basicConfig(level = logging.DEBUG)
     main()
-
-        
-        
