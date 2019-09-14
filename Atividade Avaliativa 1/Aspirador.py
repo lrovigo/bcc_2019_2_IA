@@ -10,11 +10,13 @@ world_size = (0, 0)
 
 def main():
     global world_size
+    # inicializa o mundo e seus atributos
     matrix, world_size, dirt_number = load_matrix('generic.json')
 
     position = [1,1]
     
     while True:
+        # atualiza apresentação
         show(matrix, position)
 
         posX, posY = position
@@ -27,11 +29,13 @@ def main():
         logging.debug('posY: %s' % (str(posY)))
         logging.debug('currState: %s' % (str(currState)))
 
+        # Obtém ação com o agente
         action = agenteReativoSimples(perception)
 
         print('Acao escolhida: %s' % (action))
         logging.info('Acao escolhida: %s' % (action))
 
+        # executa ação
         if action == CLEAN:
             matrix[posX][posY] = 0
         else:
@@ -73,6 +77,11 @@ def agenteReativoSimples(percepcao):
     logging.debug('isTop: %s' % (str(isTop)))
     logging.debug('isBotton: %s' % (str(isBotton)))
 
+    # se estiver indo em direção à uma parede, inverte a direção pretedida para essa orientação.
+    # i.e.: se o movimento horizontal é a esquerda e está chegando a uma parede à esquerda, muda para o movimento horizontal ser à direita.
+    #
+    # Se estiver chegando a uma parede lareral, muda a direção efetiva para baixo.
+    # Se estivesse se movendo verticalmente, altera para horizontal
     if moveingLeftWall: 
         direction = directionV
         directionH = RIGHT

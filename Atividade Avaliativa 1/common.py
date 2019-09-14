@@ -13,6 +13,8 @@ UP = 'CIMA'
 NOOP = 'NOOP'
 
 def build_matrix(high, length):
+    """constrio uma matriz high X length, com as bordas contendo 1 e os demais
+    slots contedo 0 """
     logging.debug('building matrix')
     matrix = list()
     for i in range(high):
@@ -25,10 +27,12 @@ def build_matrix(high, length):
     return matrix
 
 def make_dirty(matrix):
+    """Escolhe de 2 a 5 slots na matriz para atribuir como sujos, e retorna a
+    nova matriz e a quantidade de sujeiras """
     logging.debug('making dirt')
     global world_size
     high, length = world_size
-    dirt_number = randint(2, 5)
+    dirt_number = gandint(2, 5)
     logging.debug('dirt_number: %s' %(str(dirt_number),))
     dirt_set = set()
     while len(dirt_set) < dirt_number:
@@ -41,6 +45,9 @@ def make_dirty(matrix):
 
 
 def load_matrix(file_path):
+    """Carrega parâmetros base a partir de um JSON. Constroi matriz, com slots
+    sujos.  Retorna uma tupla com a matriz, as proporções do mundo conhecido e
+    a quantidade de sugeiras """
     logging.debug('opening file: %s' % (str(file_path)))
     with open(file_path) as file_buf:
         input_dict = json.load(file_buf)
@@ -66,6 +73,7 @@ def load_matrix(file_path):
     return (matrix, world_size, dirt_number)
     
 def show(matrix, position):
+    """Atualiza apresentção"""
     plt.imshow(matrix, 'gray')
     plt.show(block=False)
     plt.plot(position[1], position[0], '*r', 'LineWidth', 5)
@@ -73,6 +81,7 @@ def show(matrix, position):
     plt.clf()
 
 def move(direction, position):
+    """Altera posição conforme direção, e retorna nova posição"""
 
     logging.debug('moveging %s' % (str(direction)))
     logging.debug('position: %s' % (str(position)))
