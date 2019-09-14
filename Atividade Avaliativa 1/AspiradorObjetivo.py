@@ -21,7 +21,7 @@ def load_matrix(file_path):
     with open(file_path) as file_buf:
         matrix = json.load(file_buf)['base_map']
     global dirt_number
-    dirt_number = randint(1, 16)
+    dirt_number = randint(2, 5)
     dirt_set = set()
     while len(dirt_set) < dirt_number:
         dirt_set.add((randint(0, 3)+1, randint(0, 3)+1))
@@ -54,6 +54,7 @@ def main():
         
         if(action == NOOP):
             print('Points: %s' % (points))
+            input()
             break
         if action == CLEAN:
             matrix[posX][posY] = 0
