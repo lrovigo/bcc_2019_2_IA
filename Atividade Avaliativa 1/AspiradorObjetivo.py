@@ -1,147 +1,132 @@
-import matplotlib.pyplot as plt
-from random import randint
-import json
+from common import *
 import logging
+import itertools
 
-CLEAN = 'ASPIRAR'
-RIGHT = 'DIREITA'
-LEFT = 'ESQUERDA'
-DOWN = 'BAIXO'
-UP = 'CIMA'
-NOOP = 'NOOP'
-dirt_number = 0
-position = [1,1]
 state = [
-        RIGHT,  # dirrection it's corrently moveing
+        RIGHT,  # direction it's currently moving
         DOWN,   # vertical next direction
         RIGHT,  # horizontal next direction
         ]
+world_size = (0, 0)
+plan = []
 
-def load_matrix(file_path):
-    with open(file_path) as file_buf:
-        matrix = json.load(file_buf)['base_map']
-    global dirt_number
-    dirt_number = randint(2, 5)
-    dirt_set = set()
-    while len(dirt_set) < dirt_number:
-        dirt_set.add((randint(0, 3)+1, randint(0, 3)+1))
+def all_combinations_recursiv(pending, items, combinations):
+    if not pending:
+        combinations.append(items)
+        return 
+    for i in range(len(pending)):
+        new_pending = pending[:i] + pending[i+1:]
+        all_combinations_recursiv(new_pending, items + [pending[i]], combinations)
 
-    for x, y in dirt_set:
-        matrix[x][y] = 2
+def all_combinations(pending):
+    combinations = list()
+    all_combinations_recursiv(pending, list(), combinations)
+    return combinations
 
-    return matrix
+def calc_distance(positions):
+    distance = 0
+    for orig, dest in zip(positions[:-1], positions[1:]):
+        orig_x, orig_y = orig
+        dest_x, dest_y = dest
+        distance += abs(orig_x - dest_x)
+        distance += abs(orig_y - dest_y)
+
+    return distance
+
+def make_plan(rout):
+    plan = list()
+    for orig, dest in zip(rout[:-1], rout[1:]):
+        vert_move = DOWN if orig[0] < dest[0] else UP
+        hori_move = RIGHT if orig[1] < dest[1] else LEFT
+        plan += abs(orig[0] - dest[0])*[vert_move]
+        plan += abs(orig[1] - dest[1])*[hori_move]
+    return plan
+
+
+def build_clean_plan(start_position, matrix):
+
+    position_set = set()
+
+    for i in range(len(matrix)):
+        for j in range(len(matrix[i])):
+            if matrix[i][j] == 2:
+                position_set.add((i,j,))
     
+    all_possible_routes = [[start_position] + rout for rout in all_combinations(list(position_set))]
+
+    minimun = (-1, -1)
+    for ind, rout in enumerate(all_possible_routes):
+        distance = calc_distance(rout)
+        if distance < minimun[1] or minimun[1] == -1:
+            minimun = (ind, distance)
+
+    rout = all_possible_routes[minimun[0]]
+    logging.debug('rout: %s' % (str(rout)))
+    plan = make_plan(rout)
+
+    return plan
+
 def main():
-    matrix = load_matrix('map.json')
+    global world_size
+    matrix, world_size, dirt_number = load_matrix('generic.json')
+
     points = 0
-    global position
-    global dirt_number
+
+    position = [1,1]
+
+    global plan
+    plan = build_clean_plan(position, matrix)
+    logging.debug('plan: %s' % (str(plan)))
     
     while True:
-        show(matrix)
+        show(matrix, position)
 
         posX, posY = position
 
         currState = matrix[posX][posY]
+        perception = (currState, position)
+
         logging.debug('matrix: %s' % (str(matrix)))
         logging.debug('posX: %s' % (str(posX)))
         logging.debug('posY: %s' % (str(posY)))
         logging.debug('currState: %s' % (str(currState)))
-        action = agenteReativoSimples(currState,CheckRoom())
 
-        print('Acao escolhida: %s' % (action))
-        logging.info('Acao escolhida: %s' % (action))
-        
+        action = agenteReativoSimples(perception, matrix)
+
         if(action == NOOP):
             print('Points: %s' % (points))
             input()
             break
+
+        print('Acao escolhida: %s' % (action))
+        logging.info('Acao escolhida: %s' % (action))
+
         if action == CLEAN:
             matrix[posX][posY] = 0
             dirt_number -= 1
         else:
-            move(action)
+            position = move(action, position)
         points += 1
 
-def show(matrix):
-    global position
-    plt.imshow(matrix, 'gray')
-    plt.show(block=False)
-    plt.plot(position[1], position[0], '*r', 'LineWidth', 5)
-    plt.pause(0.2)
-    plt.clf()
-
-def CheckRoom():
-    global dirt_number
-    if(dirt_number <= 0):
-        return NOOP
-    
-def move(direction):
-    global position
-
-    logging.debug('moveging %s' % (str(direction)))
-    logging.debug('position: %s' % (str(position)))
-
-    if direction == RIGHT:
-        position[1] += 1
-    elif direction == LEFT:
-        position[1] -= 1
-    elif direction == UP:
-        position[0] -= 1
-    elif direction == DOWN:
-        position[0] += 1
-    logging.debug('position: %s' % (str(position)))
 
 def agenteReativoSimples(percepcao, roomState):
     logging.debug('percepcao: %s' % (str(percepcao)))
-    if roomState == NOOP:
+    logging.debug('roomState: %s' % (str(roomState)))
+
+    slot_state, position = percepcao
+
+    if max(itertools.chain.from_iterable(roomState)) < 2:
         return NOOP
-    if percepcao == 2:
+
+    if slot_state == 2:
         return CLEAN
 
-    # Load the agent state and position
-    global state
-    global position
-
-    direction, directionV, directionH = state
-    posX, posY = position
-
-    logging.debug('direction: %s' % (str(direction)))
-    logging.debug('directionV: %s' % (str(directionV)))
-    logging.debug('directionH: %s' % (str(directionH)))
-    logging.debug('posX: %s' % (str(posX)))
-    logging.debug('posY: %s' % (str(posY)))
-
-    moveingLeftWall = (direction == LEFT and posY == 1)
-    movingRightWall = (direction == RIGHT and posY == 4)
-    moveingVertival = (direction in (UP, DOWN))
-    isTop = (posX == 1)
-    isBotton = (posX == 4)
-
-    logging.debug('moveingLeftWall: %s' % (str(moveingLeftWall)))
-    logging.debug('movingRightWall: %s' % (str(movingRightWall)))
-    logging.debug('moveingVertival: %s' % (str(moveingVertival)))
-    logging.debug('isTop: %s' % (str(isTop)))
-    logging.debug('isBotton: %s' % (str(isBotton)))
-
-    if moveingLeftWall: 
-        direction = directionV
-        directionH = RIGHT
-    elif movingRightWall: # TODO: change to not be static
-        direction = directionV
-        directionH = LEFT
-    elif moveingVertival:
-        if isTop:
-            directionV = DOWN
-        elif isBotton:
-            directionV = UP
-
-        direction = directionH
-
-    # Overite the state of the agent
-    state = [direction, directionV, directionH]
-    return direction
+    global plan
+    if not plan:
+        raise Exception('Fairule! incomplete plan')
+    return plan.pop(0)
             
 if __name__ == "__main__":
     logging.basicConfig(level = logging.DEBUG)
+    # print(build_clean_plan((0,0), [[0,0,2], [0,0,2], [0, 0, 0]]))
     main()
