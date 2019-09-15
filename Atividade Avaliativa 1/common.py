@@ -32,7 +32,7 @@ def make_dirty(matrix):
     logging.debug('making dirt')
     global world_size
     high, length = world_size
-    dirt_number = gandint(2, 5)
+    dirt_number = randint(2, 5)
     logging.debug('dirt_number: %s' %(str(dirt_number),))
     dirt_set = set()
     while len(dirt_set) < dirt_number:

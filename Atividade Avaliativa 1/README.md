@@ -11,9 +11,9 @@ sujeiras, ao encontra-las irá executar a ação aspirar para remover a sujeira 
 # Perguntas
 ## A sua solução é extensível para um mundo 3 x 3? E para um mundo 6 x 6? Explique sua resposta
 
-Sim, ao alterar o tamanho da matriz o agente sempre andara onde não possuir paredes variando até onde ele pode ir levando em consideração o tamanho da matriz.
+Sim, ao alterar o tamanho da matriz o aspirador sempre andara onde não possuir paredes variando até onde ele pode ir levando em consideração o tamanho da matriz.
 
 
 ## É possível ter todo o espaço limpo efetivamente? Justifique sua resposta.
 
-Não, Pois ele sempre seguirá um caminho fixo com isso pode ser gerado sugeiras que estão apenas no final do caminho.
+Sim, pois foi implementado algoritmo com base no problema do caixeiro viajante onde sempre será calculado o melhor caminho antes do aspirador começar a se mover.
