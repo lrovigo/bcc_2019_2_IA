@@ -121,13 +121,6 @@ def mutate(ch: Chromosome) -> None:
     temp = ch[i]
     ch[i] = ch[j]
     ch[j] = temp
-    # i = random.randint(0, len(ch)-2)
-    # j = random.randint(i, len(ch)-1)
-    # while i >= j:
-    #     j = random.randint(1, len(ch)-1)
-    # a = ch[:i] + [ch[j]] + ch[i:j] + ch[j+1:]
-    # for k in range(len(a)):
-    #     ch[k] = a[k]
 
 
 def main():
@@ -146,14 +139,11 @@ def main():
     for i in range(1000):
         population.sort(key = fitness)
 
-        # if i % 1000 == 0:
         if top != fitness(population[0]):
             top = fitness(population[0])
             top_gen = i
             plots.append(prepare(population[0]))
             print(i, len(plots), fitness(population[0]), fitness(population[-1]))
-        # if i / 2 > top_gen:
-        #     break
 
         population = population[0:int(len(population)/2)]
         probability = generate_probability(population)
@@ -164,13 +154,9 @@ def main():
         for father_pair in zip(father_list_0, father_list_1):
             son_0, son_1 = crossover(father_pair)
 
-            # if random.random() <= i - top_gen / (len(population)*7):
-            #     mutate(son_0)
-            # if random.random() <= i - top_gen / (len(population)*7):
-            #     mutate(son_1)
-            if random.random() <= 0.15:
+            if random.random() <= 0.05:
                 mutate(son_0)
-            if random.random() <= 0.15:
+            if random.random() <= 0.05:
                 mutate(son_1)
             population.append(son_0)
             population.append(son_1)
@@ -184,8 +170,6 @@ def prepare(chro):
     """
     TODO: doc
     """
-    # Exibe os dados no matplot
-    # plt.plot(cities_location.get_cities()[0], cities_location.get_cities()[1], 'ro')
 
     best_path_x = []
     best_path_y = []
