@@ -1,10 +1,15 @@
+from functools import lru_cache as _lru_cache
+import numpy as _np
 
+
+@_lru_cache()
 def apply_poly(x, betas):
     """
     For any polynomial function it applies that function to a given ``x``
     ``apply_poly(x, betas)``
 
-    ``x`` -> a given number, or ``numpy``s array of numbers.
+    ``x`` -> a given number, or a tuple (that may be treated as ``numpy``s
+        array of numbers.)
 
     ``betas`` -> a list of values describing each power values.
 
@@ -17,8 +22,7 @@ def apply_poly(x, betas):
         ``[1, 5]``
 
     """
+    treated_x = x if not isinstance(x, tuple) else _np.array(x)
     enum_betas = enumerate(reversed(betas))
-    value = sum([x ** exp * beta for exp, beta in enum_betas])
+    value = sum([treated_x ** exp * beta for exp, beta in enum_betas])
     return value
-
-

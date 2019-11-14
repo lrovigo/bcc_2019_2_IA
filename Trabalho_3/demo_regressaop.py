@@ -73,10 +73,10 @@ def main():
 
     # Calculates the polyfit for 1, 2, 3 and 8 exponents
     zipped_training = tuple(zip(*training))
-    n1 = numpy.polyfit(*zipped_training, 1)
-    n2 = numpy.polyfit(*zipped_training, 2)
-    n3 = numpy.polyfit(*zipped_training, 3)
-    n8 = numpy.polyfit(*zipped_training, 8)
+    n1 = tuple(numpy.polyfit(*zipped_training, 1))
+    n2 = tuple(numpy.polyfit(*zipped_training, 2))
+    n3 = tuple(numpy.polyfit(*zipped_training, 3))
+    n8 = tuple(numpy.polyfit(*zipped_training, 8))
 
     # Calculates the error for the exponents
     eqm_n1 = eqm(testing, n1)
@@ -91,10 +91,10 @@ def main():
     lbl_n8 = 'n8\neqm ' + str(round(float(eqm_n8), 5))
 
     # Plot every curve calculated with the colors: red, green, blue and yellow
-    plot_line_beta(n1, c='r', length = graphic_lenth, label =  lbl_n1)
-    plot_line_beta(n2, c='g', length = graphic_lenth, label =  lbl_n2)
-    plot_line_beta(n3, c='b', length = graphic_lenth, label =  lbl_n3)
-    plot_line_beta(n8, c='y', length = graphic_lenth, label =  lbl_n8)
+    plot_line_beta(n1, c='r', length=graphic_lenth, label=lbl_n1)
+    plot_line_beta(n2, c='g', length=graphic_lenth, label=lbl_n2)
+    plot_line_beta(n3, c='b', length=graphic_lenth, label=lbl_n3)
+    plot_line_beta(n8, c='y', length=graphic_lenth, label=lbl_n8)
 
     #displays it
     show()

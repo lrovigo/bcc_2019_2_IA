@@ -112,7 +112,7 @@ def plot_line_beta(beta_list, length=1, precision=3, c='', label = None):
     precision_lenth = precision_mod * length
     if precision_lenth > 100000000:
         raise Exception('too precise for that length')
-    x = _np.array([x/precision_mod for x in range(int(precision_lenth))])
+    x = tuple(x/precision_mod for x in range(int(precision_lenth)))
     y = apply_poly(x, beta_list)
     _plot(x, y, c, label = label)
 
@@ -121,6 +121,8 @@ def show():
     """Show plot and add label if any is available"""
     global _has_label
     if _has_label:
-        _plt.legend(bbox_to_anchor=(1.05, 1), loc='best', borderaxespad=0.)
+       _plt.legend(bbox_to_anchor=(1, 1), loc='best')
+    manager = _plt.get_current_fig_manager()
+    manager.window.showMaximized()
     _plt.show()
 
