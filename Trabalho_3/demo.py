@@ -1,6 +1,19 @@
 from Regressao import correlacao,regressao
-from plotter import plot_dot,show,plot_line_single
+from plotter import plot_dot,show,plot_line
 import matplotlib.pyplot as plt
+
+def calc(reg,x,y):
+    result = []
+    print(reg[0])
+    print(reg[1])
+    for i in range(len(x)):
+        print(x[i])
+        print(y[i])
+        x2 = (y[i] - reg[0])/reg[1]   # X = Y - b0/b1  
+        y2 = reg[0] + (reg[1] * x[i]) # Y = b0 + b1X
+        result.append([x2,y2])
+        
+    return result    
 
 def plot(x,y):
     vetor = []
@@ -11,8 +24,7 @@ def plot(x,y):
 
     corr = correlacao(x,y)
     reg = regressao(x,y)
-    reg = [reg[1], reg[0]]
-    plot_line_single(reg, c='r')
+    plot_line(calc(reg,x,y), c='r')   
     print(reg)
     print(corr)
     

@@ -50,9 +50,6 @@ def plot_dot(dots, c = '', label = None):
     _plot(*list(zip(*dots)), c+'o', label = label)
 
 
-def plot_line_single(dots, c='', label = None):
-    _plot(dots, c, label = label)
-
 def plot_line(dots, c='', label = None):
     """
     ``plot_line(dots [, c [, label] ] )``
