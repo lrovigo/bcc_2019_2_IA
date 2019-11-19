@@ -4,14 +4,9 @@ import matplotlib.pyplot as plt
 
 def calc(reg,x,y):
     result = []
-    print(reg[0])
-    print(reg[1])
-    for i in range(len(x)):
-        print(x[i])
-        print(y[i])
-        x2 = (y[i] - reg[0])/reg[1]   # X = Y - b0/b1  
+    for i in range(len(x)):  
         y2 = reg[0] + (reg[1] * x[i]) # Y = b0 + b1X
-        result.append([x2,y2])
+        result.append([x[i],y2])
         
     return result    
 
@@ -20,13 +15,11 @@ def plot(x,y):
     for i in range(len(x)):
         vetor.append([x[i],y[i]])
 
-    plot_dot(vetor, c='m', label = 'testing')
+    plot_dot(vetor, c='m')
 
     corr = correlacao(x,y)
     reg = regressao(x,y)
-    plot_line(calc(reg,x,y), c='r')   
-    print(reg)
-    print(corr)
+    plot_line(calc(reg,x,y), c='r', label=" Correlação = " + str(corr) + "\n ß0 = " + str(reg[0]) + "\n ß1 = "+ str(reg[1]))   
     
 
 x1 = [10, 8, 13, 9, 11, 14, 6, 4, 12, 7, 5]
