@@ -1,5 +1,5 @@
-# Parte 1 - Quest„o 3
+# Parte 1 - Quest√£o 3
 
-  - O data-set que n„o È apropriado È o 3:
+  - O data-set que n√£o √© apropriado √© o 3:   
   ``` x3 = [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 19]```
      ```y3 = [6.58, 5.76, 7.71, 8.84, 8.47, 7.04, 5.25, 5.56, 7.91, 6.89, 12.50]```
