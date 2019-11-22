@@ -22,19 +22,6 @@ def dist(dadosTeste, dadosTrain):
 
 def meuKnn(dadosTrain, rotuloTrain, dadosTeste, k):
     
-    for i in range(len(grupoTest)):
-        delta = dist(dadosTeste, dadosTrain)
-
-    pass
-
-def visualizaPontos():
-    pass
-
-def normalizacao():
-    pass
-
-
-def main():    
     distancias = np.eye(len(dadosTeste),len(dadosTrain)) #Criar matriz 50*100
     soma = 0
     for i in range(len(dadosTeste)): # para cada elemento nos dados de teste
@@ -46,6 +33,19 @@ def main():
             distancias[i][j] = math.sqrt(soma); #terminar a formula com a aplicação da raiz quadrada
             soma = 0
         distancias[i] = np.sort(distancias[i]) # ordenar o alinha e colocar na matriz
+
+    pass
+
+def visualizaPontos():
+    pass
+
+def normalizacao():
+    pass
+
+
+def main():
+    k = 3
+    meuKnn(dadosTrain, rotuloTrain, dadosTeste, k)
 
             
     
