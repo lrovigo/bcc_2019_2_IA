@@ -21,20 +21,27 @@ def dist(dadosTeste, dadosTrain):
     pass
 
 def meuKnn(dadosTrain, rotuloTrain, dadosTeste, k):
-    
-    distancias = np.eye(len(dadosTeste),len(dadosTrain)) #Criar matriz 50*100
+    distanciasIndex = np.eye(len(dadosTrain),len(dadosTeste))# Criar matriz 100*50 que conterá os index's
+    distancias = np.eye(len(dadosTrain),len(dadosTeste)) #Criar matriz 100*50
     soma = 0
-    for i in range(len(dadosTeste)): # para cada elemento nos dados de teste
-        for j in range(len(dadosTrain)):    # para cada elemento nos dados de treino 
-            y = dadosTeste[i] # pegar a linha do dado de teste
-            x = dadosTrain[j] # pegar a linha do dado de treino
+    print(len(dadosTrain))
+    print(len(dadosTeste))
+    for i in range(len(dadosTrain)): # para cada elemento nos dados de teste
+        for j in range(len(dadosTeste)):    # para cada elemento nos dados de treino 
+            y = dadosTeste[j] # pegar a linha do dado de teste
+            x = dadosTrain[i] # pegar a linha do dado de treino
             for k in range(len(x)): # para cada valor da linha do dado de treino
                 soma += (x[k] - y[k])**2 # aplicar a somatoria da formula da distancia
             distancias[i][j] = math.sqrt(soma); #terminar a formula com a aplicação da raiz quadrada
             soma = 0
-        distancias[i] = np.sort(distancias[i]) # ordenar o alinha e colocar na matriz
+        lista_ordenada = sorted(list(enumerates(distancias[i])), key=lambda x: x[1]) # transformar o array em um lista de tuplas com o format = "(indice,valor)" e ordenar pelo valor
 
-    pass
+        for l in range(len(lista_ordenada)):
+            print(i)
+            distancias[i] = lista_ordenada[i][1]
+            distanciasIndex[i] = lista_ordenada[i][0]
+
+     
 
 def visualizaPontos():
     pass
@@ -46,6 +53,12 @@ def normalizacao():
 def main():
     k = 3
     meuKnn(dadosTrain, rotuloTrain, dadosTeste, k)
+
+    rotuloPrevisto = meuKnn(dadosTrain, rotuloTrain, dadosTeste, k)
+    estaCorreto = rotuloPrevisto == testRots;
+    numCorreto = sum(estaCorreto)
+    totalNum = length(data_testRots)
+    acurácia = numCorreto / totalNum 
 
             
     
